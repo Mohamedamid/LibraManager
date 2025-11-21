@@ -24,6 +24,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Builder.Default
+    private boolean enabled = true;
+
     // Null si SUPER_ADMIN. Sinon, obligatoire pour l'isolation des données.
     private Long storeId;
 }
