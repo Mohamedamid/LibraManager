@@ -8,35 +8,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "purchase_orders")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "purchase_orders")
 public class PurchaseOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Référence unique de la commande (ex: PO-2025-001)
     private String orderNumber;
 
-    // Date de création de la commande (quand on a appelé le fournisseur)
+    @Builder.Default
     private LocalDateTime orderDate = LocalDateTime.now();
 
+    // Statut initial PENDING. Passage à RECEIVED uniquement après vérification physique.
     @Enumerated(EnumType.STRING)
-    private OrderStatus status = OrderStatus.PENDING; // Par défaut, elle est en attente
+    @Builder.Default
+    private OrderStatus status = OrderStatus.PENDING;
 
     @ManyToOne
-    private Supplier supplier;  // Le fournisseur concerné
+    private Supplier supplier;
 
-    // TRÈS IMPORTANT : L'entrepôt cible.
-    // C'est ici que le stock sera ajouté une fois la commande validée (ex: Dépôt central).
+    // Destination du stock (Généralement le dépôt central)
     @ManyToOne
     private Warehouse targetWarehouse;
 
-    private Long storeId; // SaaS (Isolation des données)
+    private Long storeId;
 
-    // Liste des produits commandés (Détails)
     @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<PurchaseOrderItem> items = new ArrayList<>();
 }

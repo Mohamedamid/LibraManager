@@ -4,24 +4,24 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "product_barcodes")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "product_barcodes")
 public class ProductBarcode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true)
-    private String barcode; // Le code scanné (ex: 123456)
+    private String barcode;
 
-    // C'est ici que réside la logique "Paquet vs Pièce"
-    // 1 = Pièce unitaire
-    // 50 = Paquet de 50 stylos
+    // Facteur de conversion pour le stock.
+    // Ex: 1 = Pièce, 50 = Boite
     private Integer multiplier;
 
-    private String label; // Ex: "Pièce", "Boite", "Carton"
+    private String label; // "Unit", "Box", etc.
 
     @ManyToOne
     @JoinColumn(name = "product_id")

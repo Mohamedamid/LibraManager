@@ -4,19 +4,20 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "stock_levels", uniqueConstraints = {
-        // Cette contrainte empêche d'avoir deux lignes pour le même produit dans le même entrepôt
+        // Unicité : Un produit ne peut avoir qu'une seule ligne de stock par entrepôt
         @UniqueConstraint(columnNames = {"product_id", "warehouse_id"})
 })
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class StockLevel {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // C'est ICI qu'on stocke la quantité réelle
-    private Integer quantity;
+    @Builder.Default
+    private Integer quantity = 0;
 
     @ManyToOne
     @JoinColumn(name = "product_id")

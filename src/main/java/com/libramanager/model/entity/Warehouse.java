@@ -4,17 +4,21 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Data
 @Table(name = "warehouses")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Warehouse {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;      // Ex: "Magasin Principal", "Dépôt Garage"
-    private String location;  // Adresse physique
+    private String name;
+    private String location;
 
-    // Si true : On peut vendre directement de cet endroit (ex: Magasin)
-    // Si false : C'est juste du stockage (ex: Garage), il faut faire un transfert avant
+    // flag 'isSellable':
+    // true -> Magasin (Vente directe possible)
+    // false -> Dépôt (Stockage uniquement, transfert requis)
     private boolean isSellable;
 
     private Long storeId;

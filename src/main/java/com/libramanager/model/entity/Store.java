@@ -5,20 +5,25 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Data // Génère Getters, Setters, toString, etc.
+@Table(name = "stores")
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "stores")
 public class Store {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;        // Nom de la librairie (ex: Librairie Al-Najah)
+    private String name;
     private String address;
     private String phone;
-    private boolean isActive;   // Pour bloquer une librairie si abonnement non payé
 
+    // Bloquage de l'accès si abonnement impayé
+    @Builder.Default
+    private boolean isActive = true;
+
+    @Builder.Default
     @Column(updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }

@@ -5,38 +5,42 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "sales")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "sales")
 public class Sale {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String invoiceNumber; // Numéro unique (ex: INV-2025-0001)
+    private String invoiceNumber;
+
+    @Builder.Default
     private LocalDateTime saleDate = LocalDateTime.now();
 
-    private BigDecimal totalAmount; // Montant total à payer
-    private BigDecimal paidAmount;  // Montant réellement payé (pour gérer les avances)
+    private BigDecimal totalAmount;
+    private BigDecimal paidAmount; // Gestion des avances/acomptes
 
     @Enumerated(EnumType.STRING)
-    private SaleType type;          // RETAIL ou WHOLESALE
+    private SaleType type; // Distinction Vente Comptoir / Gros
 
     @Enumerated(EnumType.STRING)
-    private PaymentStatus status;   // PAID, PENDING, PARTIAL
+    private PaymentStatus status;
 
     @ManyToOne
-    private Client client; // Peut être NULL si c'est une vente au détail (client anonyme)
+    private Client client; // Nullable pour les ventes comptoir (clients de passage)
 
     @ManyToOne
-    private User user;     // Le caissier qui a fait la vente
+    private User user;
 
     private Long storeId;
 
-    // OneToMany : Une vente contient plusieurs lignes (SaleItem)
     @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL)
-    private List<SaleItem> items;
+    @Builder.Default
+    private List<SaleItem> items = new ArrayList<>();
 }

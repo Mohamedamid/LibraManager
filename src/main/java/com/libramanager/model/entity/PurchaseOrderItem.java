@@ -4,26 +4,25 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "purchase_order_items")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "purchase_order_items")
 public class PurchaseOrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    private Product product; // Le produit commandé
+    private Product product;
 
-    // --- LE COEUR DU PROCESSUS ---
-
-    // Quantité Commandée : Ce qu'on a demandé au fournisseur (ex: 100 stylos).
+    // Qté demandée au fournisseur
     private Integer quantityOrdered;
 
-    // Quantité Reçue : Ce qu'on a réellement compté au déchargement du camion.
-    // Au début, c'est 0. On le remplit manuellement à l'arrivée.
-    // C'est SEULEMENT cette quantité qui sera ajoutée au StockLevel.
+    // Qté réellement reçue (Scan à la réception).
+    // C'est cette valeur qui incrémente le StockLevel.
+    @Builder.Default
     private Integer quantityReceived = 0;
 
     @ManyToOne

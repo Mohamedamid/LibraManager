@@ -5,10 +5,11 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "users")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,13 +18,12 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
-    private String password; // Doit être hashé (BCrypt)
+    private String password; // Hash BCrypt obligatoire
     private String fullName;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    // CRUCIAL : Lien vers la librairie.
-    // Si c'est un SUPER_ADMIN, ce champ peut être null.
+    // Null si SUPER_ADMIN. Sinon, obligatoire pour l'isolation des données.
     private Long storeId;
 }

@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "products")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "products")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,23 +20,24 @@ public class Product {
     private String name;
     private String description;
 
-    // --- PRIX ---
-    private BigDecimal purchasePrice;  // Prix d'achat (Coût)
-    private BigDecimal retailPrice;    // Prix de vente détail (Public)
-    private BigDecimal wholesalePrice; // Prix de vente gros (Entreprises)
+    // Gestion des prix (HT/TTC gérés en front)
+    private BigDecimal purchasePrice;
+    private BigDecimal retailPrice;
+    private BigDecimal wholesalePrice;
 
-    // NOTE IMPORTANTE : Pas de champ "stockQuantity" ici !
-    // Le stock est calculé dynamiquement via la table 'StockLevel' (voir plus bas).
+    // NB: Le stock réel est dans la table 'stock_levels'.
+    // Ne pas ajouter de champ quantity ici pour éviter les conflits multi-entrepôts.
 
-    private Integer minStockAlert;     // Seuil pour l'alerte de rupture
+    private Integer minStockAlert;
 
     @ManyToOne
     private Category category;
 
-    private Long storeId; // Isolation des données (SaaS)
+    private Long storeId;
 
-    // Relation One-to-Many avec les codes-barres
-    // CascadeType.ALL : Si on sauvegarde le produit, on sauvegarde ses codes-barres
+    // Gestion des unités multiples (Paquet vs Pièce)
+    // Cascade ALL pour save le produit et ses codes-barres en une fois
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<ProductBarcode> barcodes = new ArrayList<>();
 }
